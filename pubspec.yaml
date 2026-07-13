@@ -64,6 +64,7 @@ flutter:
 
   assets:
     - assets/models/right_arm.glb
+    - assets/models/Ch22_nonPBR.glb
     - assets/images/
     - assets/videos/
 
