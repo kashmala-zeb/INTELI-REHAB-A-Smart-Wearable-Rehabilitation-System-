@@ -124,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
       Navigator.of(context).pushReplacement(
         PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => const PatientProfileSetupScreen(),
+          pageBuilder: (context, animation, secondaryAnimation) => const HomeDashboardScreen(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(opacity: animation, child: child);
           },
@@ -699,61 +699,178 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   }
 
   // ── Dialog Handlers ────────────────────────────────────────────────────────
+  // ── Dialog Handlers ────────────────────────────────────────────────────────
   void _showForgotPasswordDialog() {
-    final emailTextController = TextEditingController();
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
-          children: [
-            Icon(Icons.lock_reset, color: AppColors.tealCore),
-            const SizedBox(width: 8),
-            const Text('Reset Password'),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              'Enter your registered email to receive a verification link.',
-              style: TextStyle(fontSize: 13, color: Color(0xFF6B7280)),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: emailTextController,
-              decoration: InputDecoration(
-                hintText: 'user@example.com',
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      barrierDismissible: false,
+      builder: (context) {
+        int resetStep = 1; // 1: Email, 2: OTP, 3: New Password, 4: Success
+        final emailCtrl = TextEditingController();
+        final otpCtrl = TextEditingController();
+        final passCtrl = TextEditingController();
+        final confirmPassCtrl = TextEditingController();
+        bool isSubmitting = false;
+
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            String title = 'Reset Password';
+            IconData titleIcon = Icons.lock_reset;
+            if (resetStep == 2) {
+              title = 'Verify OTP';
+              titleIcon = Icons.pin_outlined;
+            } else if (resetStep == 3) {
+              title = 'New Password';
+              titleIcon = Icons.lock_outline;
+            } else if (resetStep == 4) {
+              title = 'Password Updated';
+              titleIcon = Icons.check_circle_outline;
+            }
+
+            return AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              title: Row(
+                children: [
+                  Icon(titleIcon, color: AppColors.tealCore),
+                  const SizedBox(width: 8),
+                  Text(title),
+                ],
               ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Reset link sent to ${emailTextController.text}'),
-                  backgroundColor: const Color(0xFF22C55E),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (resetStep == 1) ...[
+                      const Text(
+                        'Enter your registered email address to receive a reset code.',
+                        style: TextStyle(fontSize: 13, color: Color(0xFF6B7280)),
+                      ),
+                      const SizedBox(height: 16),
+                      TextField(
+                        controller: emailCtrl,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          hintText: 'user@example.com',
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                      ),
+                    ] else if (resetStep == 2) ...[
+                      Text(
+                        'Enter the 4-digit code sent to ${emailCtrl.text}.',
+                        style: const TextStyle(fontSize: 13, color: Color(0xFF6B7280)),
+                      ),
+                      const SizedBox(height: 16),
+                      TextField(
+                        controller: otpCtrl,
+                        keyboardType: TextInputType.number,
+                        maxLength: 4,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 8),
+                        decoration: InputDecoration(
+                          hintText: '0000',
+                          counterText: '',
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                      ),
+                    ] else if (resetStep == 3) ...[
+                      const Text(
+                        'Create a new strong password for your medical portal.',
+                        style: TextStyle(fontSize: 13, color: Color(0xFF6B7280)),
+                      ),
+                      const SizedBox(height: 16),
+                      TextField(
+                        controller: passCtrl,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          hintText: 'New Password',
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: confirmPassCtrl,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          hintText: 'Confirm Password',
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                      ),
+                    ] else if (resetStep == 4) ...[
+                      const Icon(Icons.verified_user_rounded, color: Color(0xFF10B981), size: 48),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Your password has been successfully updated. You can now log in with your new password.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 13.5, color: Color(0xFF1E293B)),
+                      ),
+                    ],
+                    if (isSubmitting) ...[
+                      const SizedBox(height: 16),
+                      const Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF0F766E)))),
+                    ],
+                  ],
                 ),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.tealCore,
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('Submit'),
-          ),
-        ],
-      ),
+              ),
+              actions: [
+                if (resetStep < 4)
+                  TextButton(
+                    onPressed: isSubmitting ? null : () => Navigator.pop(context),
+                    child: const Text('Cancel'),
+                  ),
+                ElevatedButton(
+                  onPressed: isSubmitting
+                      ? null
+                      : () async {
+                          if (resetStep == 1) {
+                            if (emailCtrl.text.trim().isEmpty) return;
+                            setDialogState(() => isSubmitting = true);
+                            await Future.delayed(const Duration(milliseconds: 1200));
+                            setDialogState(() {
+                              isSubmitting = false;
+                              resetStep = 2;
+                            });
+                          } else if (resetStep == 2) {
+                            if (otpCtrl.text.trim().length < 4) return;
+                            setDialogState(() => isSubmitting = true);
+                            await Future.delayed(const Duration(milliseconds: 1000));
+                            setDialogState(() {
+                              isSubmitting = false;
+                              resetStep = 3;
+                            });
+                          } else if (resetStep == 3) {
+                            if (passCtrl.text.isEmpty || passCtrl.text != confirmPassCtrl.text) return;
+                            setDialogState(() => isSubmitting = true);
+                            await Future.delayed(const Duration(milliseconds: 1200));
+                            setDialogState(() {
+                              isSubmitting = false;
+                              resetStep = 4;
+                            });
+                          } else if (resetStep == 4) {
+                            Navigator.pop(context);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Please sign in with your new credentials.'),
+                                backgroundColor: Color(0xFF0F766E),
+                              ),
+                            );
+                          }
+                        },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.tealCore,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: Text(resetStep == 4 ? 'Return to Login' : 'Continue'),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 }
