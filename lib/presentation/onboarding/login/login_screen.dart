@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:inteli_rehab/core/constants/app_colors.dart';
 import 'package:inteli_rehab/presentation/onboarding/signup/signup_screen.dart';
 import 'package:inteli_rehab/presentation/onboarding/otp/otp_screen.dart';
+import 'package:inteli_rehab/presentation/onboarding/profile_setup/patient_profile_setup_screen.dart';
 import 'package:inteli_rehab/presentation/home/home_dashboard.dart';
 import 'package:inteli_rehab/core/constants/onboarding_constants.dart';
 
@@ -123,9 +124,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
       Navigator.of(context).pushReplacement(
         PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => OtpVerificationScreen(
-            email: _emailController.text.trim(),
-          ),
+          pageBuilder: (context, animation, secondaryAnimation) => const PatientProfileSetupScreen(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(opacity: animation, child: child);
           },
