@@ -1,395 +1,317 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:inteli_rehab/presentation/device_connection/bluetooth_permission.dart';
+import 'package:flutter/material.dart';
+import 'package:inteli_rehab/core/constants/app_colors.dart';
+import 'package:inteli_rehab/core/globals.dart';
+import 'package:inteli_rehab/widgets/shared_widgets.dart';
+import 'package:inteli_rehab/presentation/exercises/exercise_list.dart';
 
-class PlacementScreen extends StatefulWidget {
-  const PlacementScreen({super.key});
+enum _BleState { idle, scanning, found, connecting, connected }
 
-  @override
-  State<PlacementScreen> createState() => _PlacementScreenState();
+class _Device {
+  final String name, signal;
+  final IconData icon;
+  _Device(this.name, this.signal, this.icon);
 }
 
-class _PlacementScreenState extends State<PlacementScreen> {
-  int currentStep = 1;
-  String searchStatus = 'idle'; // idle, scanning, warning, success
+class ConnectDeviceScreen extends StatefulWidget {
+  const ConnectDeviceScreen({super.key});
 
-  void handleDiagnosticScan() {
-    setState(() {
-      searchStatus = 'scanning';
-      currentStep = 2;
-    });
+  @override
+  State<ConnectDeviceScreen> createState() => _ConnectDeviceScreenState();
+}
 
-    // Simulates background spatial evaluation failing after 2 seconds
+class _ConnectDeviceScreenState extends State<ConnectDeviceScreen> with TickerProviderStateMixin {
+  _BleState _state = _BleState.idle;
+  late AnimationController _scanPulse, _connPulse;
+  int? _connecting;
+
+  final _devices = [
+    _Device('InteliRehab Band X1', 'Signal: Strong', Icons.watch_rounded),
+    _Device('InteliRehab Band X1', 'Signal: Moderate', Icons.watch_rounded),
+    _Device('InteliRehab Sensor v2', 'Signal: Strong', Icons.sensors_rounded),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _scanPulse = AnimationController(vsync: this, duration: const Duration(milliseconds: 1200))..repeat(reverse: true);
+    _connPulse = AnimationController(vsync: this, duration: const Duration(milliseconds: 800))..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _scanPulse.dispose();
+    _connPulse.dispose();
+    super.dispose();
+  }
+
+  void _startScan() {
+    setState(() => _state = _BleState.scanning);
     Timer(const Duration(seconds: 2), () {
-      setState(() {
-        searchStatus = 'warning';
-      });
+      if (mounted) setState(() => _state = _BleState.found);
     });
   }
 
-  void handleRetryScan() {
-    setState(() {
-      searchStatus = 'scanning';
-    });
-    // Simulates manual realignment success
-    Timer(const Duration(milliseconds: 1500), () {
-      setState(() {
-        searchStatus = 'success';
-        currentStep = 3;
-      });
-    });
-  }
-
-  void resetToStepOne() {
-    setState(() {
-      currentStep = 1;
-      searchStatus = 'idle';
-    });
+  void _connect(int index) async {
+    setState(() { _state = _BleState.connecting; _connecting = index; });
+    await Future.delayed(const Duration(seconds: 2));
+    globalIsDeviceConnected = true;
+    if (mounted) setState(() => _state = _BleState.connected);
   }
 
   @override
   Widget build(BuildContext context) {
-    final isIdle = searchStatus == 'idle';
-    final isScanning = searchStatus == 'scanning';
-    final isWarning = searchStatus == 'warning';
-    final isSuccess = searchStatus == 'success';
-    
-    // Forearm IMU turns Amber if there is a warning, Green if success, Teal if scanning/idle
-    final forearmColor = isWarning ? const Color(0xFFD97706) : (isSuccess ? Colors.green : const Color(0xFF0C9E98));
-    final restColor = isSuccess ? Colors.green : const Color(0xFF0C9E98);
-
-    return Container(
-      width: double.infinity,
-      constraints: const BoxConstraints(maxWidth: 450), 
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFFEEF9F8), Color(0xFFF4FAFA), Color(0xFFF0F8F8)],
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.slate800),
+          onPressed: () => Navigator.pop(context),
         ),
+        title: const Text('Connect Devices', style: TextStyle(color: AppColors.slate800, fontSize: 16, fontWeight: FontWeight.bold)),
+        centerTitle: true,
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // 📱 SYSTEM TOP BAR
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('9:41', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black54)),
-              Row(
-                children: [
-                  const Icon(Icons.bluetooth, size: 12, color: Color(0xFF0C9E98)),
-                  const SizedBox(width: 4),
-                  Container(
-                    width: 20,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black38),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  )
-                ],
-              )
-            ],
-          ),
-          const SizedBox(height: 6),
+              const Text('Connect your wearable', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: AppColors.slate800)),
+              const SizedBox(height: 6),
+              const Text('Make sure your InteliRehab armband is charged and within range', style: TextStyle(fontSize: 13, color: AppColors.slate400)),
+              const SizedBox(height: 24),
 
-          // 📊 PROGRESS BAR
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('STEP $currentStep OF 3', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w900, color: isWarning ? const Color(0xFFD97706) : const Color(0xFF0C9E98))),
-                  Text(
-                    currentStep == 1 ? 'Placement Diagnostics' : (isWarning ? 'Calibration Warning' : 'Verification Success'),
-                    style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.black38),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Container(
-                  height: 6,
-                  color: const Color(0xFFD8ECEC),
-                  child: FractionallySizedBox(
-                    alignment: Alignment.centerLeft,
-                    widthFactor: currentStep / 3.0,
-                    child: Container(color: isWarning ? const Color(0xFFD97706) : const Color(0xFF0C9E98)),
-                  ),
-                ),
-              )
-            ],
-          ),
-          const SizedBox(height: 10),
+              // Animated BLE visual
+              Center(child: _BleVisual(state: _state, pulseCtrl: _scanPulse)),
+              const SizedBox(height: 28),
 
-          // 🛑 HEADER NAVIGATION
-          Row(
-            children: [
-              InkWell(
-                onTap: resetToStepOne,
-                child: Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: const Color(0xFFF1F5F9)),
-                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4, offset: const Offset(0, 2))],
-                  ),
-                  child: const Icon(Icons.chevron_left, size: 18, color: Colors.black87),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('INTELI-REHAB', style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1.5, color: Color(0xFF0C9E98))),
-                    Text(
-                      isWarning ? 'Muscle Alignment Deviation' : (isScanning ? 'Activating Sensor Cluster...' : 'Hardware Streams Approved'),
-                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF1E293B)),
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
-          const SizedBox(height: 10),
+              // Status-driven content
+              Expanded(child: _buildBody()),
 
-          // ═══ 🖼️ IMAGE CANVAS WINDOW ═══
-          Center(
-            child: Container(
-              width: 380,
-              height: 340, 
-              decoration: BoxDecoration(
-                color: Colors.white, 
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white.withOpacity(0.6)),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6, offset: const Offset(0, 2))],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final h = constraints.maxHeight;
-                    final w = constraints.maxWidth;
-                    return Stack(
-                      children: [
-                        Positioned.fill(
-                          child: Image.asset(
-                            'assets/images/arms-bg.png', 
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        if (isScanning)
-                          Container(color: const Color(0xFF0C9E98).withOpacity(0.05)),
-                        
-                        Positioned(top: h * 0.300, left: w * 0.190, child: buildDotMarker(restColor)), 
-                        Positioned(top: h * 0.660, left: w * 0.180, child: buildDotMarker(forearmColor)), // Dynamic Forearm Target Node
-                        Positioned(top: h * 0.225, left: w * 0.776, child: buildDotMarker(restColor)), 
-                        
-                      ],
+              // Bottom action
+              if (_state == _BleState.idle) ...[
+                PrimaryButton(label: 'Scan for devices', onTap: _startScan, icon: Icons.bluetooth_searching_rounded),
+              ] else if (_state == _BleState.scanning) ...[
+                const PrimaryButton(label: 'Scanning…', onTap: null, loading: true),
+              ] else if (_state == _BleState.connected) ...[
+                PrimaryButton(
+                  label: 'Go to exercise list →',
+                  onTap: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const ExerciseListScreen()),
                     );
                   },
+                  color: AppColors.green,
                 ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-
-          // ═══ 📊 COMPACT SMART SWAPPING MODULE ═══
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // CONDITION 1: Idle Checklist (Ultra-tight Padding)
-                if (isIdle)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: const Color(0xFFE2E8F0)),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Pre-flight System Requirements', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF334155))),
-                        const SizedBox(height: 4),
-                        buildChecklistItem('All sensor batteries must be above the 20% limit'),
-                        buildChecklistItem('Sensor placement should be accurate and aligned with the muscle'),
-                        buildChecklistItem('Devices are supposed to be working within the required 2-meter range'),
-                      ],
-                    ),
-                  ),
-                
-                // CONDITION 2: Active Scanning Layout
-                if (isScanning)
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.white, 
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: const Color(0xFFE2E8F0)),
-                    ),
-                    child: const Row(
-                      children: [
-                        Spacer(),
-                        SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF0C9E98))),
-                        SizedBox(width: 10),
-                        Expanded(child: Text('Sweeping Signal & Hardware Handshake Pins...', style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.bold, color: Color(0xFF475569)))),
-                        Spacer(),
-                      ],
-                    ),
-                  ),
-                
-                // CONDITION 3: Muscle Displacement Alert Card
-                if (isWarning)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFF7ED), 
-                      borderRadius: BorderRadius.circular(12), 
-                      border: Border.all(color: const Color(0xFFFFEDD5)),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Row(
-                          children: [
-                            Icon(Icons.error_outline_rounded, size: 13, color: Color(0xFFD97706)),
-                            SizedBox(width: 4),
-                            Text('Forearm IMU Displacement Alert', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFFD97706))),
-                          ],
-                        ),
-                        const SizedBox(height: 2),
-                        const Text('The sensor has drifted from the targeted brachioradialis muscle center point parameters. Realign the strap boundary.', style: TextStyle(fontSize: 10, color: Color(0xFF9A3412))),
-                        const SizedBox(height: 6),
-                        SizedBox(
-                          height: 26,
-                          child: ElevatedButton.icon(
-                            onPressed: handleRetryScan,
-                            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD97706), padding: const EdgeInsets.symmetric(horizontal: 8), elevation: 0, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))),
-                            icon: const Icon(Icons.cached, size: 11, color: Colors.white),
-                            label: const Text('Re-evaluate Spatial Coordinates', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white)),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-
-                // CONDITION 4: Verification Approved Card
-                if (isSuccess)
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFECFDF5), 
-                      borderRadius: BorderRadius.circular(12), 
-                      border: Border.all(color: const Color(0xFFA7F3D0)),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('✓ Device Connection Check Approved', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF065F46))),
-                        const SizedBox(height: 4),
-                        Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: BoxDecoration(color: Colors.white.withOpacity(0.7), borderRadius: BorderRadius.circular(8)),
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(Icons.battery_charging_full, size: 11, color: Color(0xFF0C9E98)),
-                                  SizedBox(width: 4),
-                                  Text('Average Battery: 96%', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: Color(0xFF475569))),
-                                ],
-                              ),
-                              Text('Signal: Excellent', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: Color(0xFF475569)))
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
+                const SizedBox(height: 10),
+              ] else if (_state == _BleState.found) ...[
+                SecondaryButton(label: 'Scan again', onTap: _startScan),
               ],
-            ),
+              if (_state != _BleState.connected) ...[
+                const SizedBox(height: 12),
+                Center(
+                  child: TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Skip for now', style: TextStyle(color: AppColors.slate400, fontSize: 14)),
+                  ),
+                ),
+              ],
+              const SizedBox(height: 12),
+            ],
           ),
-          const SizedBox(height: 8),
-
-          SizedBox(
-            height: 44,
-            child: ElevatedButton(
-              onPressed: isSuccess 
-                  ? () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => Scaffold(
-                            appBar: AppBar(
-                              backgroundColor: const Color(0xFFEEF9F8),
-                              elevation: 0,
-                              leading: IconButton(
-                                icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.black87),
-                                onPressed: () => Navigator.of(context).pop(),
-                              ),
-                              title: const Text(
-                                "BATTERY STATUS",
-                                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, letterSpacing: 1.2, color: Colors.black54),
-                              ),
-                              centerTitle: true,
-                            ),
-                            body: const SafeArea(child: BatteryScreen()),
-                          ),
-                        ),
-                      );
-                    }
-                  : (isWarning ? resetToStepOne : handleDiagnosticScan),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: isWarning ? const Color(0xFF1E293B) : (isSuccess ? const Color(0xFF22C55E) : const Color(0xFF0C9E98)),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-              child: Text(
-                isWarning ? 'Reset Placement Target' : (isSuccess ? 'Proceed to Battery Check' : 'Start Diagnostic Check'),
-                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget buildDotMarker(Color color) {
-    return Container(
-      width: 14,
-      height: 14,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.white, width: 2),
-        boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 2))],
-      ),
-    );
-  }
-
-  Widget buildChecklistItem(String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 1.5),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-        decoration: BoxDecoration(color: const Color(0xFFF8FAFC), borderRadius: BorderRadius.circular(6)),
-        child: Row(
-          children: [
-            const Icon(Icons.power_settings_new_rounded, size: 10, color: Color(0xFF0C9E98)),
-            const SizedBox(width: 6),
-            Expanded(child: Text(text, style: const TextStyle(fontSize: 9.5, fontWeight: FontWeight.w500, color: Color(0xFF475569)))),
-          ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildBody() {
+    switch (_state) {
+      case _BleState.idle: return _buildIdle();
+      case _BleState.scanning: return _buildScanning();
+      case _BleState.found: return _buildDeviceList();
+      case _BleState.connecting: return _buildConnecting();
+      case _BleState.connected: return _buildConnected();
+    }
+  }
+
+  Widget _buildIdle() {
+    return ListView(children: const [
+      SizedBox(height: 8),
+      _StepTile(num: '1', title: 'Power on your armband', sub: 'Hold the side button for 3 seconds until the LED blinks teal'),
+      _StepTile(num: '2', title: 'Enable Bluetooth on your phone', sub: 'Go to Settings → Bluetooth and ensure it is turned on'),
+      _StepTile(num: '3', title: 'Wear the band on your affected arm', sub: 'Place sensors on the upper arm as instructed by your physiotherapist'),
+    ]);
+  }
+
+  Widget _buildScanning() {
+    return Center(
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        AnimatedBuilder(
+          animation: _scanPulse,
+          builder: (context, child) => Text(
+            'Searching for InteliRehab devices…',
+            style: TextStyle(fontSize: 14, color: AppColors.teal.withValues(alpha: 0.6 + 0.4 * _scanPulse.value), fontWeight: FontWeight.w600),
+          ),
+        ),
+        const SizedBox(height: 10),
+        const Text('Make sure Bluetooth is enabled', style: TextStyle(fontSize: 12, color: AppColors.slate400)),
+      ]),
+    );
+  }
+
+  Widget _buildDeviceList() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('${_devices.length} devices found', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.slate600)),
+        const SizedBox(height: 10),
+        ..._devices.asMap().entries.map((e) => GestureDetector(
+          onTap: () => _connect(e.key),
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 10),
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              border: Border.all(color: AppColors.slate200, width: 1.2),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Row(children: [
+              Container(width: 40, height: 40, decoration: BoxDecoration(color: AppColors.tealLight, borderRadius: BorderRadius.circular(10)),
+                child: Icon(e.value.icon, color: AppColors.teal, size: 20)),
+              const SizedBox(width: 12),
+              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(e.value.name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.slate800)),
+                Text(e.value.signal, style: const TextStyle(fontSize: 12, color: AppColors.slate400)),
+              ])),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                decoration: BoxDecoration(color: AppColors.teal, borderRadius: BorderRadius.circular(8)),
+                child: const Text('Connect', style: TextStyle(fontSize: 12, color: AppColors.white, fontWeight: FontWeight.w700)),
+              ),
+            ]),
+          ),
+        )),
+      ],
+    );
+  }
+
+  Widget _buildConnecting() {
+    final dev = _connecting != null ? _devices[_connecting!] : null;
+    return Center(
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        AnimatedBuilder(
+          animation: _connPulse,
+          builder: (context, child) => Container(
+            width: 64, height: 64,
+            decoration: BoxDecoration(
+              color: AppColors.teal.withValues(alpha: 0.1 + 0.1 * _connPulse.value),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.bluetooth_connected_rounded, color: AppColors.teal, size: 30),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text('Connecting to ${dev?.name ?? 'device'}…', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.slate800)),
+        const SizedBox(height: 6),
+        const Text('Establishing secure BLE connection', style: TextStyle(fontSize: 12, color: AppColors.slate400)),
+      ]),
+    );
+  }
+
+  Widget _buildConnected() {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(color: AppColors.greenLight, borderRadius: BorderRadius.circular(16)),
+          child: Row(children: [
+            const Icon(Icons.check_circle_rounded, color: AppColors.green, size: 32),
+            const SizedBox(width: 14),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              const Text('Wearable connected!', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.green)),
+              const SizedBox(height: 4),
+              Text(_devices[_connecting!].name, style: const TextStyle(fontSize: 13, color: AppColors.green)),
+            ])),
+          ]),
+        ),
+        const SizedBox(height: 18),
+        const _ConnectedStat(label: 'Battery', value: '87%', icon: Icons.battery_charging_full_rounded, color: AppColors.green),
+        const SizedBox(height: 10),
+        const _ConnectedStat(label: 'IMU Signal', value: 'Strong', icon: Icons.sensors_rounded, color: AppColors.teal),
+        const SizedBox(height: 10),
+        const _ConnectedStat(label: 'EMG Channels', value: '2 active', icon: Icons.electric_bolt_rounded, color: AppColors.amber),
+      ],
+    );
+  }
+}
+
+class _StepTile extends StatelessWidget {
+  final String num, title, sub;
+  const _StepTile({required this.num, required this.title, required this.sub});
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 24),
+      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Container(
+          width: 28, height: 28, alignment: Alignment.center,
+          decoration: const BoxDecoration(color: AppColors.tealLight, shape: BoxShape.circle),
+          child: Text(num, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: AppColors.teal)),
+        ),
+        const SizedBox(width: 14),
+        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.slate800)),
+          const SizedBox(height: 4),
+          Text(sub, style: const TextStyle(fontSize: 12, color: AppColors.slate400, height: 1.4)),
+        ])),
+      ]),
+    );
+  }
+}
+
+class _ConnectedStat extends StatelessWidget {
+  final String label, value;
+  final IconData icon;
+  final Color color;
+  const _ConnectedStat({required this.label, required this.value, required this.icon, required this.color});
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(border: Border.all(color: AppColors.slate200), borderRadius: BorderRadius.circular(12)),
+      child: Row(children: [
+        Icon(icon, color: color, size: 20),
+        const SizedBox(width: 12),
+        Text(label, style: const TextStyle(fontSize: 13, color: AppColors.slate600)),
+        const Spacer(),
+        Text(value, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: color)),
+      ]),
+    );
+  }
+}
+
+class _BleVisual extends StatelessWidget {
+  final _BleState state;
+  final Animation<double> pulseCtrl;
+  const _BleVisual({required this.state, required this.pulseCtrl});
+
+  @override
+  Widget build(BuildContext context) {
+    if (state == _BleState.connecting || state == _BleState.connected) return const SizedBox.shrink();
+    return AnimatedBuilder(
+      animation: pulseCtrl,
+      builder: (context, child) => Container(
+        width: 80, height: 80,
+        decoration: BoxDecoration(
+          color: AppColors.tealLight,
+          shape: BoxShape.circle,
+          boxShadow: state == _BleState.scanning ? [BoxShadow(color: AppColors.teal.withValues(alpha: 0.2 * pulseCtrl.value), blurRadius: 30 * pulseCtrl.value, spreadRadius: 10 * pulseCtrl.value)] : [],
+        ),
+        child: const Icon(Icons.bluetooth_rounded, color: AppColors.teal, size: 32),
       ),
     );
   }

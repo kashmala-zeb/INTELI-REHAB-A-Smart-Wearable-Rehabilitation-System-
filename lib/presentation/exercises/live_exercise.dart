@@ -143,6 +143,7 @@ class _LiveExerciseScreenState extends State<LiveExerciseScreen>
               _isVideoReady = true;
             });
             _videoCtrl?.setLooping(true);
+            _videoCtrl?.setVolume(0.0);
             _videoCtrl?.play();
           }
         });

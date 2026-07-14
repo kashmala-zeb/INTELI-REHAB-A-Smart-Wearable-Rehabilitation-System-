@@ -35,7 +35,7 @@ class EmptyState extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: AppColors.tealCore.withOpacity(0.08),
+                color: AppColors.tealCore.withValues(alpha: 0.08),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, size: 40, color: AppColors.tealCore),
@@ -63,7 +63,7 @@ class EmptyState extends StatelessWidget {
             if (actionLabel != null) ...[
               const SizedBox(height: 20),
               Material(
-                color: AppColors.tealCore.withOpacity(0.08),
+                color: AppColors.tealCore.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(12),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(12),

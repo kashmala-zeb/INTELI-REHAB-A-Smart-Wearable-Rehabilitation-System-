@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:inteli_rehab/core/constants/app_colors.dart';
-import 'package:inteli_rehab/presentation/home/home_dashboard.dart';
 import 'package:inteli_rehab/core/constants/onboarding_constants.dart';
 import 'package:inteli_rehab/presentation/onboarding/profile_setup/patient_profile_setup_screen.dart';
 
@@ -282,7 +281,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> with Tick
                             shape: BoxShape.circle,
                             gradient: RadialGradient(
                               colors: [
-                                AppColors.tealBright.withOpacity(0.15),
+                                AppColors.tealBright.withValues(alpha: 0.15),
                                 Colors.transparent,
                               ],
                             ),
@@ -418,7 +417,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> with Tick
                       border: Border.all(color: _shakeError ? const Color(0xFFEF4444) : const Color(0xFFE5E7EB)),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF1F2937).withOpacity(0.03),
+                          color: const Color(0xFF1F2937).withValues(alpha: 0.03),
                           blurRadius: 16,
                           offset: const Offset(0, 4),
                         ),
@@ -507,7 +506,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> with Tick
                       boxShadow: _isOtpComplete() && !_isLoading && !_isSuccess
                           ? [
                               BoxShadow(
-                                color: AppColors.tealCore.withOpacity(0.3),
+                                color: AppColors.tealCore.withValues(alpha: 0.3),
                                 blurRadius: 16,
                                 offset: const Offset(0, 4),
                               ),
@@ -608,7 +607,7 @@ class _HeroIllustrationPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final Paint linePaint = Paint()
-      ..color = accentColor.withOpacity(0.15)
+      ..color = accentColor.withValues(alpha: 0.15)
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
 

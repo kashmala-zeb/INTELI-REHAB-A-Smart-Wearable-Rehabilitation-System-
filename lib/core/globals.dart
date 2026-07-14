@@ -1,0 +1,1 @@
+bool globalIsDeviceConnected = false;

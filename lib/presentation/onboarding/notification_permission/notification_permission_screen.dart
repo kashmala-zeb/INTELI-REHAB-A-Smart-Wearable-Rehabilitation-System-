@@ -75,7 +75,7 @@ class _NotificationPermissionScreenState extends State<NotificationPermissionScr
               height: 400,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.tealCore.withOpacity(0.04),
+                color: AppColors.tealCore.withValues(alpha: 0.04),
               ),
             ),
           ),
@@ -87,7 +87,7 @@ class _NotificationPermissionScreenState extends State<NotificationPermissionScr
               height: 400,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(0xFF14B8A6).withOpacity(0.04),
+                color: const Color(0xFF14B8A6).withValues(alpha: 0.04),
               ),
             ),
           ),
@@ -160,7 +160,7 @@ class _NotificationPermissionScreenState extends State<NotificationPermissionScr
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFF0F766E).withOpacity(0.18),
+                              color: const Color(0xFF0F766E).withValues(alpha: 0.18),
                               blurRadius: 12,
                               offset: const Offset(0, 4),
                             ),
@@ -250,12 +250,12 @@ class SyncIllustrationPainter extends CustomPainter {
 
     // Glowing connection line paint
     final Paint linePaint = Paint()
-      ..color = activeColor.withOpacity(0.18 + 0.12 * (1.0 - progress))
+      ..color = activeColor.withValues(alpha: 0.18 + 0.12 * (1.0 - progress))
       ..strokeWidth = 3
       ..style = PaintingStyle.stroke;
 
     final Paint pulsePaint = Paint()
-      ..color = activeColor.withOpacity(0.55 * (1.0 - progress))
+      ..color = activeColor.withValues(alpha: 0.55 * (1.0 - progress))
       ..strokeWidth = 5
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
@@ -302,7 +302,7 @@ class SyncIllustrationPainter extends CustomPainter {
 
     // Screen content lines
     final Paint screenPaint = Paint()
-      ..color = color.withOpacity(0.2)
+      ..color = color.withValues(alpha: 0.2)
       ..strokeWidth = 2
       ..strokeCap = StrokeCap.round;
 
@@ -317,7 +317,7 @@ class SyncIllustrationPainter extends CustomPainter {
   void _drawWearable(Canvas canvas, Offset center, double radius, Color color) {
     // Watch wrist strap
     final Paint strapPaint = Paint()
-      ..color = color.withOpacity(0.3)
+      ..color = color.withValues(alpha: 0.3)
       ..strokeWidth = 12
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
@@ -337,8 +337,8 @@ class SyncIllustrationPainter extends CustomPainter {
 
     // Watch inner display sensors (glowing heart/nodes)
     canvas.drawCircle(center, 4, Paint()..color = color);
-    canvas.drawCircle(Offset(center.dx - 6, center.dy), 2.5, Paint()..color = color.withOpacity(0.4));
-    canvas.drawCircle(Offset(center.dx + 6, center.dy), 2.5, Paint()..color = color.withOpacity(0.4));
+    canvas.drawCircle(Offset(center.dx - 6, center.dy), 2.5, Paint()..color = color.withValues(alpha: 0.4));
+    canvas.drawCircle(Offset(center.dx + 6, center.dy), 2.5, Paint()..color = color.withValues(alpha: 0.4));
   }
 
   void _drawBell(Canvas canvas, Offset center, double size, Color color) {

@@ -2,8 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:inteli_rehab/core/constants/app_colors.dart';
-import 'package:inteli_rehab/presentation/onboarding/otp/otp_screen.dart';
+
 import 'package:inteli_rehab/core/constants/onboarding_constants.dart';
+import 'package:inteli_rehab/presentation/onboarding/onboarding_flow.dart';
 
 class CreateAccountScreen extends StatefulWidget {
   const CreateAccountScreen({super.key});
@@ -179,49 +180,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> with SingleTi
     await Future.delayed(const Duration(milliseconds: 1800));
 
     if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          title: Row(
-            children: [
-              const Icon(Icons.check_circle, color: Color(0xFF22C55E), size: 28),
-              const SizedBox(width: 10),
-              Text(
-                'Success!',
-                style: TextStyle(color: AppColors.tealCore, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          content: const Text(
-            'Your patient account was securely created! Welcome to INTELI-REHAB.',
-            style: TextStyle(fontSize: 14, color: Color(0xFF1F2937)),
-          ),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => OtpVerificationScreen(
-                      email: _emailController.text.trim(),
-                    ),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.tealCore,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-              child: const Text('Go to Verification'),
-            ),
-          ],
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const OnboardingManagerScreen(),
         ),
       );
     }
@@ -247,92 +208,14 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> with SingleTi
                 // ── Top Brand Header ──
                 Column(
                   children: [
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          width: isSmallScreen ? 80 : 100,
-                          height: isSmallScreen ? 80 : 100,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: RadialGradient(
-                              colors: [
-                                AppColors.tealBright.withOpacity(0.15),
-                                Colors.transparent,
-                              ],
-                            ),
-                          ),
-                        ),
-                        // Mini Assembled Brand Logo Stack
-                        SizedBox(
-                          width: isSmallScreen ? 44 : 56,
-                          height: isSmallScreen ? 44 : 56,
-                          child: Stack(
-                            clipBehavior: Clip.none,
-                            children: [
-                              Positioned(
-                                top: 109.0 * ((isSmallScreen ? 44 : 56) / 568),
-                                left: 277.0 * ((isSmallScreen ? 44 : 56) / 568),
-                                width: 291.0 * ((isSmallScreen ? 44 : 56) / 568),
-                                height: 457.0 * ((isSmallScreen ? 44 : 56) / 568),
-                                child: Image.asset(
-                                  'assets/images/thin line.png',
-                                  fit: BoxFit.contain,
-                                  color: AppColors.tealBright,
-                                  colorBlendMode: BlendMode.srcIn,
-                                ),
-                              ),
-                              Positioned(
-                                top: 1.0 * ((isSmallScreen ? 44 : 56) / 568),
-                                left: 0.0 * ((isSmallScreen ? 44 : 56) / 568),
-                                width: 331.0 * ((isSmallScreen ? 44 : 56) / 568),
-                                height: 565.0 * ((isSmallScreen ? 44 : 56) / 568),
-                                child: Image.asset(
-                                  'assets/images/left hand.png',
-                                  fit: BoxFit.contain,
-                                  color: AppColors.tealCore,
-                                  colorBlendMode: BlendMode.srcIn,
-                                ),
-                              ),
-                              Positioned(
-                                top: 114.0 * ((isSmallScreen ? 44 : 56) / 568),
-                                left: 240.0 * ((isSmallScreen ? 44 : 56) / 568),
-                                width: 328.0 * ((isSmallScreen ? 44 : 56) / 568),
-                                height: 327.0 * ((isSmallScreen ? 44 : 56) / 568),
-                                child: Image.asset(
-                                  'assets/images/right hand.png',
-                                  fit: BoxFit.contain,
-                                  color: AppColors.tealBright,
-                                  colorBlendMode: BlendMode.srcIn,
-                                ),
-                              ),
-                              Positioned(
-                                top: 115.0 * ((isSmallScreen ? 44 : 56) / 568),
-                                left: 125.0 * ((isSmallScreen ? 44 : 56) / 568),
-                                width: 443.0 * ((isSmallScreen ? 44 : 56) / 568),
-                                height: 451.0 * ((isSmallScreen ? 44 : 56) / 568),
-                                child: Image.asset(
-                                  'assets/images/human hand.png',
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                              Positioned(
-                                top: 11.0 * ((isSmallScreen ? 44 : 56) / 568),
-                                left: 103.0 * ((isSmallScreen ? 44 : 56) / 568),
-                                width: 257.0 * ((isSmallScreen ? 44 : 56) / 568),
-                                height: 260.0 * ((isSmallScreen ? 44 : 56) / 568),
-                                child: Image.asset(
-                                  'assets/images/filled circle.png',
-                                  fit: BoxFit.contain,
-                                  color: AppColors.tealBright,
-                                  colorBlendMode: BlendMode.srcIn,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                    Image.asset(
+                      'assets/images/logo.png',
+                      width: isSmallScreen ? 80 : 100,
+                      height: isSmallScreen ? 80 : 100,
+                      fit: BoxFit.contain,
                     ),
+                  ],
+                ),
                     const SizedBox(height: 6),
                     Text(
                       'Create Your Account',
@@ -350,8 +233,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> with SingleTi
                       style: TextStyle(fontSize: 11.5, color: Color(0xFF6B7280)),
                       textAlign: TextAlign.center,
                     ),
-                  ],
-                ),
 
                 // ── Registration Inputs Card ──
                 Container(
@@ -361,7 +242,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> with SingleTi
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF1F2937).withOpacity(0.03),
+                        color: const Color(0xFF1F2937).withValues(alpha: 0.03),
                         blurRadius: 16,
                         offset: const Offset(0, 4),
                       ),
@@ -521,7 +402,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> with SingleTi
                           boxShadow: _isFormValid() && !_isLoading
                               ? [
                                   BoxShadow(
-                                    color: AppColors.tealCore.withOpacity(0.3),
+                                    color: AppColors.tealCore.withValues(alpha: 0.3),
                                     blurRadius: 16,
                                     offset: const Offset(0, 4),
                                   ),
@@ -675,7 +556,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> with SingleTi
             boxShadow: isFocused
                 ? [
                     BoxShadow(
-                      color: AppColors.tealBright.withOpacity(0.15),
+                      color: AppColors.tealBright.withValues(alpha: 0.15),
                       blurRadius: 8,
                       spreadRadius: 1,
                     ),

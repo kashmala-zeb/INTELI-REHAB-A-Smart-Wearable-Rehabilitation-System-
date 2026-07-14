@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:inteli_rehab/core/constants/app_colors.dart';
 import 'package:inteli_rehab/presentation/onboarding/signup/signup_screen.dart';
-import 'package:inteli_rehab/presentation/onboarding/otp/otp_screen.dart';
-import 'package:inteli_rehab/presentation/onboarding/profile_setup/patient_profile_setup_screen.dart';
 import 'package:inteli_rehab/presentation/home/home_dashboard.dart';
 import 'package:inteli_rehab/core/constants/onboarding_constants.dart';
 
@@ -156,96 +154,11 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   // ── Top Brand Section ──
                   Column(
                     children: [
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Container(
-                            width: isSmallScreen ? 90 : 110,
-                            height: isSmallScreen ? 90 : 110,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              gradient: RadialGradient(
-                                colors: [
-                                  AppColors.tealBright.withOpacity(0.18),
-                                  Colors.transparent,
-                                ],
-                              ),
-                            ),
-                          ),
-                          // Small Assembled Brand Logo Stack Component (Static view)
-                          SizedBox(
-                            width: isSmallScreen ? 50 : 64,
-                            height: isSmallScreen ? 50 : 64,
-                            child: Stack(
-                              clipBehavior: Clip.none,
-                              children: [
-                                // Thin Line
-                                Positioned(
-                                  top: 109.0 * ((isSmallScreen ? 50 : 64) / 568),
-                                  left: 277.0 * ((isSmallScreen ? 50 : 64) / 568),
-                                  width: 291.0 * ((isSmallScreen ? 50 : 64) / 568),
-                                  height: 457.0 * ((isSmallScreen ? 50 : 64) / 568),
-                                  child: Image.asset(
-                                    'assets/images/thin line.png',
-                                    fit: BoxFit.contain,
-                                    color: AppColors.tealBright,
-                                    colorBlendMode: BlendMode.srcIn,
-                                  ),
-                                ),
-                                // Left Arc
-                                Positioned(
-                                  top: 1.0 * ((isSmallScreen ? 50 : 64) / 568),
-                                  left: 0.0 * ((isSmallScreen ? 50 : 64) / 568),
-                                  width: 331.0 * ((isSmallScreen ? 50 : 64) / 568),
-                                  height: 565.0 * ((isSmallScreen ? 50 : 64) / 568),
-                                  child: Image.asset(
-                                    'assets/images/left hand.png',
-                                    fit: BoxFit.contain,
-                                    color: AppColors.tealCore,
-                                    colorBlendMode: BlendMode.srcIn,
-                                  ),
-                                ),
-                                // Right Arc
-                                Positioned(
-                                  top: 114.0 * ((isSmallScreen ? 50 : 64) / 568),
-                                  left: 240.0 * ((isSmallScreen ? 50 : 64) / 568),
-                                  width: 328.0 * ((isSmallScreen ? 50 : 64) / 568),
-                                  height: 327.0 * ((isSmallScreen ? 50 : 64) / 568),
-                                  child: Image.asset(
-                                    'assets/images/right hand.png',
-                                    fit: BoxFit.contain,
-                                    color: AppColors.tealBright,
-                                    colorBlendMode: BlendMode.srcIn,
-                                  ),
-                                ),
-                                // Arm
-                                Positioned(
-                                  top: 115.0 * ((isSmallScreen ? 50 : 64) / 568),
-                                  left: 125.0 * ((isSmallScreen ? 50 : 64) / 568),
-                                  width: 443.0 * ((isSmallScreen ? 50 : 64) / 568),
-                                  height: 451.0 * ((isSmallScreen ? 50 : 64) / 568),
-                                  child: Image.asset(
-                                    'assets/images/human hand.png',
-                                    fit: BoxFit.contain,
-                                  ),
-                                ),
-                                // Head
-                                Positioned(
-                                  top: 11.0 * ((isSmallScreen ? 50 : 64) / 568),
-                                  left: 103.0 * ((isSmallScreen ? 50 : 64) / 568),
-                                  width: 257.0 * ((isSmallScreen ? 50 : 64) / 568),
-                                  height: 260.0 * ((isSmallScreen ? 50 : 64) / 568),
-                                  child: Image.asset(
-                                    'assets/images/filled circle.png',
-                                    fit: BoxFit.contain,
-                                    color: AppColors.tealBright,
-                                    colorBlendMode: BlendMode.srcIn,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                      Image.asset(
+                        'assets/images/logo.png',
+                        width: isSmallScreen ? 120 : 140,
+                        height: isSmallScreen ? 120 : 140,
+                        fit: BoxFit.contain,
                       ),
                       const SizedBox(height: 8),
                       Text(
@@ -282,7 +195,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF1F2937).withOpacity(0.04),
+                          color: const Color(0xFF1F2937).withValues(alpha: 0.04),
                           blurRadius: 16,
                           offset: const Offset(0, 4),
                         ),
@@ -448,7 +361,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                             boxShadow: _isFormValid() && !_isLoading
                                 ? [
                                     BoxShadow(
-                                      color: AppColors.tealCore.withOpacity(0.3),
+                                      color: AppColors.tealCore.withValues(alpha: 0.3),
                                       blurRadius: 16,
                                       offset: const Offset(0, 4),
                                     ),
@@ -527,9 +440,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                     decoration: BoxDecoration(
-                      color: AppColors.tealBright.withOpacity(0.05),
+                      color: AppColors.tealBright.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.tealBright.withOpacity(0.1)),
+                      border: Border.all(color: AppColors.tealBright.withValues(alpha: 0.1)),
                     ),
                     child: Row(
                       children: [
@@ -602,7 +515,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 boxShadow: isFocused
                     ? [
                         BoxShadow(
-                          color: AppColors.tealBright.withOpacity(0.15),
+                          color: AppColors.tealBright.withValues(alpha: 0.15),
                           blurRadius: 8,
                           spreadRadius: 1,
                         ),

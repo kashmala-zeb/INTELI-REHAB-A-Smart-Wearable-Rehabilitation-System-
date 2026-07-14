@@ -44,6 +44,7 @@ class _ExerciseOverviewScreenState extends State<ExerciseOverviewScreen> {
             _isVideoReady = true;
           });
           _videoCtrl?.setLooping(true);
+          _videoCtrl?.setVolume(0.0);
           _videoCtrl?.play();
         }
       });
@@ -175,6 +176,14 @@ class _ExerciseOverviewScreenState extends State<ExerciseOverviewScreen> {
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          IconButton(
+            icon: Image.asset('assets/images/logo.png', width: 28, height: 28),
+            onPressed: () {
+              Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),

@@ -73,7 +73,7 @@ class _ExerciseCardState extends State<ExerciseCard>
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
-                color: AppColors.slate.shade900.withOpacity(0.04),
+                color: AppColors.slate.shade900.withValues(alpha: 0.04),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -123,7 +123,7 @@ class _ExerciseCardState extends State<ExerciseCard>
                                       vertical: 5,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: exercise.diffColor.withOpacity(
+                                      color: exercise.diffColor.withValues(alpha: 
                                         0.10,
                                       ),
                                       borderRadius: BorderRadius.circular(8),
@@ -351,7 +351,7 @@ class _ExerciseCardState extends State<ExerciseCard>
             label: const Text('Repeat'),
             style: TextButton.styleFrom(
               foregroundColor: AppColors.tealCore,
-              backgroundColor: AppColors.tealCore.withOpacity(0.08),
+              backgroundColor: AppColors.tealCore.withValues(alpha: 0.08),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
@@ -396,7 +396,7 @@ class _ExerciseCardState extends State<ExerciseCard>
               borderRadius: BorderRadius.circular(14),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.tealCore.withOpacity(0.30),
+                  color: AppColors.tealCore.withValues(alpha: 0.30),
                   blurRadius: 12,
                   offset: const Offset(0, 5),
                 ),

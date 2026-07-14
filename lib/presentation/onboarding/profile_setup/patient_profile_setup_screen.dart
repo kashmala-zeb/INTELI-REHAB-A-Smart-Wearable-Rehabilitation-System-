@@ -174,7 +174,7 @@ class _PatientProfileSetupScreenState extends State<PatientProfileSetupScreen> w
               height: 400,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.tealCore.withOpacity(0.03),
+                color: AppColors.tealCore.withValues(alpha: 0.03),
               ),
             ),
           ),
@@ -186,7 +186,7 @@ class _PatientProfileSetupScreenState extends State<PatientProfileSetupScreen> w
               height: 400,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(0xFF14B8A6).withOpacity(0.03),
+                color: const Color(0xFF14B8A6).withValues(alpha: 0.03),
               ),
             ),
           ),
@@ -408,7 +408,7 @@ class _PatientProfileSetupScreenState extends State<PatientProfileSetupScreen> w
       width: isSmallScreen ? 115 : 135,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: isSelected ? AppColors.tealCore.withOpacity(0.06) : Colors.white,
+        color: isSelected ? AppColors.tealCore.withValues(alpha: 0.06) : Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isSelected ? AppColors.tealCore : const Color(0xFFE2E8F0),
@@ -416,7 +416,7 @@ class _PatientProfileSetupScreenState extends State<PatientProfileSetupScreen> w
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isSelected ? 0.04 : 0.01),
+            color: Colors.black.withValues(alpha: isSelected ? 0.04 : 0.01),
             blurRadius: 10,
             offset: const Offset(0, 4),
           )
@@ -516,7 +516,7 @@ class _PatientProfileSetupScreenState extends State<PatientProfileSetupScreen> w
                   duration: const Duration(milliseconds: 200),
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
-                    color: isSelected ? AppColors.tealCore.withOpacity(0.06) : const Color(0xFFF8FAFC),
+                    color: isSelected ? AppColors.tealCore.withValues(alpha: 0.06) : const Color(0xFFF8FAFC),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       color: isSelected ? AppColors.tealCore : const Color(0xFFE2E8F0),
@@ -529,7 +529,7 @@ class _PatientProfileSetupScreenState extends State<PatientProfileSetupScreen> w
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: isSelected ? AppColors.tealCore.withOpacity(0.12) : Colors.white,
+                          color: isSelected ? AppColors.tealCore.withValues(alpha: 0.12) : Colors.white,
                         ),
                         child: Icon(icon, size: 18, color: isSelected ? AppColors.tealCore : const Color(0xFF475569)),
                       ),
@@ -616,7 +616,7 @@ class _PatientProfileSetupScreenState extends State<PatientProfileSetupScreen> w
                 margin: const EdgeInsets.symmetric(vertical: 6),
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: isSelected ? AppColors.tealCore.withOpacity(0.06) : Colors.white,
+                  color: isSelected ? AppColors.tealCore.withValues(alpha: 0.06) : Colors.white,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: isSelected ? AppColors.tealCore : const Color(0xFFE2E8F0),
@@ -629,7 +629,7 @@ class _PatientProfileSetupScreenState extends State<PatientProfileSetupScreen> w
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: isSelected ? AppColors.tealCore.withOpacity(0.12) : const Color(0xFFF1F5F9),
+                        color: isSelected ? AppColors.tealCore.withValues(alpha: 0.12) : const Color(0xFFF1F5F9),
                       ),
                       child: Icon(
                         isSelected ? Icons.check_circle : Icons.circle_outlined,
@@ -710,7 +710,7 @@ class _PatientProfileSetupScreenState extends State<PatientProfileSetupScreen> w
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   decoration: BoxDecoration(
-                    color: isYes ? AppColors.tealCore.withOpacity(0.06) : Colors.white,
+                    color: isYes ? AppColors.tealCore.withValues(alpha: 0.06) : Colors.white,
                     border: Border.all(
                       color: isYes ? AppColors.tealCore : const Color(0xFFCBD5E1),
                       width: isYes ? 2.5 : 1.5,
@@ -742,7 +742,7 @@ class _PatientProfileSetupScreenState extends State<PatientProfileSetupScreen> w
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   decoration: BoxDecoration(
-                    color: isNo ? AppColors.tealCore.withOpacity(0.06) : Colors.white,
+                    color: isNo ? AppColors.tealCore.withValues(alpha: 0.06) : Colors.white,
                     border: Border.all(
                       color: isNo ? AppColors.tealCore : const Color(0xFFCBD5E1),
                       width: isNo ? 2.5 : 1.5,
@@ -854,7 +854,7 @@ class _PatientProfileSetupScreenState extends State<PatientProfileSetupScreen> w
                   margin: const EdgeInsets.symmetric(vertical: 4),
                   padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                   decoration: BoxDecoration(
-                    color: isSelected ? AppColors.tealCore.withOpacity(0.06) : Colors.white,
+                    color: isSelected ? AppColors.tealCore.withValues(alpha: 0.06) : Colors.white,
                     border: Border.all(
                       color: isSelected ? AppColors.tealCore : const Color(0xFFE2E8F0),
                       width: isSelected ? 2.5 : 1.5,
@@ -1012,7 +1012,7 @@ class _PatientProfileSetupScreenState extends State<PatientProfileSetupScreen> w
                     );
                     if (picked != null) {
                       setState(() {
-                        _setupModel.reminderTime = "${picked.format(context)}";
+                        _setupModel.reminderTime = picked.format(context);
                       });
                     }
                   } else {
@@ -1024,7 +1024,7 @@ class _PatientProfileSetupScreenState extends State<PatientProfileSetupScreen> w
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   decoration: BoxDecoration(
-                    color: isSelected ? AppColors.tealCore.withOpacity(0.06) : Colors.white,
+                    color: isSelected ? AppColors.tealCore.withValues(alpha: 0.06) : Colors.white,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: isSelected ? AppColors.tealCore : const Color(0xFFE2E8F0),
@@ -1032,7 +1032,7 @@ class _PatientProfileSetupScreenState extends State<PatientProfileSetupScreen> w
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(isSelected ? 0.03 : 0.01),
+                        color: Colors.black.withValues(alpha: isSelected ? 0.03 : 0.01),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       )
@@ -1100,7 +1100,7 @@ class _PatientProfileSetupScreenState extends State<PatientProfileSetupScreen> w
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: const Color(0xFFF1F5F9),
-                    border: Border.all(color: AppColors.tealCore.withOpacity(0.25), width: 4),
+                    border: Border.all(color: AppColors.tealCore.withValues(alpha: 0.25), width: 4),
                   ),
                   child: ClipOval(
                     child: _hasAvatar
@@ -1261,7 +1261,7 @@ class _PatientProfileSetupScreenState extends State<PatientProfileSetupScreen> w
               boxShadow: isValid
                   ? [
                       BoxShadow(
-                        color: const Color(0xFF0F766E).withOpacity(0.18),
+                        color: const Color(0xFF0F766E).withValues(alpha: 0.18),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -1295,7 +1295,7 @@ class _PatientProfileSetupScreenState extends State<PatientProfileSetupScreen> w
   // --- saving loading overlay ---
   Widget _buildSavingOverlay() {
     return Container(
-      color: Colors.black.withOpacity(0.65),
+      color: Colors.black.withValues(alpha: 0.65),
       child: Center(
         child: Container(
           padding: const EdgeInsets.all(28),
@@ -1356,7 +1356,7 @@ class OnboardingArmPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final Paint armPaint = Paint()
-      ..color = isSelected ? activeColor.withOpacity(0.16) : const Color(0xFFF1F5F9)
+      ..color = isSelected ? activeColor.withValues(alpha: 0.16) : const Color(0xFFF1F5F9)
       ..style = PaintingStyle.fill;
 
     final Paint outlinePaint = Paint()

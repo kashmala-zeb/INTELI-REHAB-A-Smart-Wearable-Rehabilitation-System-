@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:inteli_rehab/presentation/exercises/live_exercise.dart';
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Design System Color Tokens (INTELI-REHAB)
@@ -25,16 +25,16 @@ class _S {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// CalibrationScreen (Stateful for countdown, status steps, scan lines)
+// OnboardingCalibrationScreen (Stateful for countdown, status steps, scan lines)
 // ─────────────────────────────────────────────────────────────────────────────
-class CalibrationScreen extends StatefulWidget {
-  const CalibrationScreen({super.key});
+class OnboardingCalibrationScreen extends StatefulWidget {
+  const OnboardingCalibrationScreen({super.key});
 
   @override
-  State<CalibrationScreen> createState() => _CalibrationScreenState();
+  State<OnboardingCalibrationScreen> createState() => _OnboardingCalibrationScreenState();
 }
 
-class _CalibrationScreenState extends State<CalibrationScreen>
+class _OnboardingCalibrationScreenState extends State<OnboardingCalibrationScreen>
     with TickerProviderStateMixin {
   // Timers & Counters
   int _countdown = 5;
@@ -160,14 +160,6 @@ class _CalibrationScreenState extends State<CalibrationScreen>
             color: _C.textLight,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: Image.asset('assets/images/logo.png', width: 28, height: 28),
-            onPressed: () {
-              Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
-            },
-          ),
-        ],
       ),
       body: SafeArea(
         child: Column(
@@ -243,14 +235,7 @@ class _CalibrationScreenState extends State<CalibrationScreen>
                       isCalibrated: _isCalibrated,
                       onRestart: _startCalibration,
                       onStart: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const LiveExerciseScreen(
-                              exerciseName: 'Shoulder Rehabilitation',
-                            ),
-                          ),
-                        );
+                        Navigator.pushReplacementNamed(context, '/wait_screen');
                       },
                     ),
                   ],

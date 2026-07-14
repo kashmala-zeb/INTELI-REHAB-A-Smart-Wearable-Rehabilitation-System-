@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:inteli_rehab/presentation/exercises/calibration.dart';
 import 'package:inteli_rehab/presentation/exercises/exercise_list.dart';
+import 'package:inteli_rehab/core/globals.dart';
 
 class RangeScreen extends StatefulWidget {
   const RangeScreen({super.key});
@@ -139,7 +139,7 @@ class _RangeScreenState extends State<RangeScreen> {
                     color: Colors.white,
                     shape: BoxShape.circle,
                     border: Border.all(color: const Color(0xFFF1F5F9)),
-                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4, offset: const Offset(0, 2))],
+                    boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2))],
                   ),
                   child: const Icon(Icons.chevron_left, size: 18, color: Colors.black87),
                 ),
@@ -169,8 +169,8 @@ class _RangeScreenState extends State<RangeScreen> {
               decoration: BoxDecoration(
                 color: Colors.white, 
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white.withOpacity(0.6)),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6, offset: const Offset(0, 2))],
+                border: Border.all(color: Colors.white.withValues(alpha: 0.6)),
+                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 6, offset: const Offset(0, 2))],
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
@@ -187,7 +187,7 @@ class _RangeScreenState extends State<RangeScreen> {
                           ),
                         ),
                         if (isScanning)
-                          Container(color: const Color(0xFF0C9E98).withOpacity(0.05)),
+                          Container(color: const Color(0xFF0C9E98).withValues(alpha: 0.05)),
                         
                         Positioned(top: h * 0.300, left: w * 0.190, child: buildDotMarker(bicepsColor)), // Dynamic Biceps EMG Node
                         Positioned(top: h * 0.660, left: w * 0.180, child: buildDotMarker(restColor)), 
@@ -298,7 +298,7 @@ class _RangeScreenState extends State<RangeScreen> {
                         const SizedBox(height: 4),
                         Container(
                           padding: const EdgeInsets.all(5),
-                          decoration: BoxDecoration(color: Colors.white.withOpacity(0.7), borderRadius: BorderRadius.circular(8)),
+                          decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.7), borderRadius: BorderRadius.circular(8)),
                           child: const Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -326,7 +326,8 @@ class _RangeScreenState extends State<RangeScreen> {
             child: ElevatedButton(
               onPressed: isSuccess 
                   ? () {
-                      Navigator.of(context).push(
+                      globalIsDeviceConnected = true;
+                      Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
                           builder: (context) => const ExerciseListScreen(),
                         ),

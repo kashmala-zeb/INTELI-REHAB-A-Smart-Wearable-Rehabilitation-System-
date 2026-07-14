@@ -186,6 +186,7 @@ class _ExerciseListScreenState extends State<ExerciseListScreen>
     );
     if (result != null) {
       setState(() => _filterState = result);
+      if (!mounted) return;
       AppSnackbar.success(context, 'Filter Applied');
     }
   }
@@ -196,6 +197,23 @@ class _ExerciseListScreenState extends State<ExerciseListScreen>
     final filtered = _filteredExercises;
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF8FAFC),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF1E293B)),
+          onPressed: () => Navigator.pop(context),
+        ),
+        actions: [
+          IconButton(
+            icon: Image.asset('assets/images/logo.png', width: 28, height: 28),
+            onPressed: () {
+              Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+            },
+          ),
+        ],
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -353,7 +371,7 @@ class _ExerciseListScreenState extends State<ExerciseListScreen>
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: AppColors.slate.shade900.withOpacity(0.05),
+            color: AppColors.slate.shade900.withValues(alpha: 0.05),
             blurRadius: 18,
             offset: const Offset(0, 6),
           ),
@@ -401,8 +419,8 @@ class _ExerciseListScreenState extends State<ExerciseListScreen>
           ),
           Material(
             color: _filterState.isActive
-                ? AppColors.tealCore.withOpacity(0.16)
-                : AppColors.tealCore.withOpacity(0.08),
+                ? AppColors.tealCore.withValues(alpha: 0.16)
+                : AppColors.tealCore.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(12),
             child: InkWell(
               borderRadius: BorderRadius.circular(12),
@@ -452,14 +470,14 @@ class _ExerciseListScreenState extends State<ExerciseListScreen>
                 boxShadow: isSelected
                     ? [
                         BoxShadow(
-                          color: AppColors.tealCore.withOpacity(0.32),
+                          color: AppColors.tealCore.withValues(alpha: 0.32),
                           blurRadius: 14,
                           offset: const Offset(0, 6),
                         ),
                       ]
                     : [
                         BoxShadow(
-                          color: AppColors.slate.shade900.withOpacity(0.02),
+                          color: AppColors.slate.shade900.withValues(alpha: 0.02),
                           blurRadius: 6,
                           offset: const Offset(0, 2),
                         ),
@@ -544,7 +562,7 @@ class _ExerciseListScreenState extends State<ExerciseListScreen>
         border: Border.all(color: const Color(0xFFDCFCE7), width: 1.2),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF16A34A).withOpacity(0.05),
+            color: const Color(0xFF16A34A).withValues(alpha: 0.05),
             blurRadius: 14,
             offset: const Offset(0, 6),
           ),
@@ -559,7 +577,7 @@ class _ExerciseListScreenState extends State<ExerciseListScreen>
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF16A34A).withOpacity(0.15),
+                  color: const Color(0xFF16A34A).withValues(alpha: 0.15),
                   blurRadius: 8,
                 ),
               ],
@@ -615,7 +633,7 @@ class _ExerciseListScreenState extends State<ExerciseListScreen>
                     _motivationMessage,
                     key: ValueKey(_motivationMessage),
                     style: TextStyle(
-                      color: const Color(0xFF166534).withOpacity(0.9),
+                      color: const Color(0xFF166534).withValues(alpha: 0.9),
                       fontSize: 12,
                       height: 1.4,
                     ),
